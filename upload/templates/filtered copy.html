@@ -1,0 +1,132 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Logs</title>
+    
+    <style>
+        .back-button {
+            background-color: white;
+            border: 2px solid gray;
+            border-radius: 6px;
+            font-size: medium;
+        }
+
+        .uploaded-button {
+            background-color: aqua;
+            border: 2px solid gray;
+            border-radius: 6px;
+            font-size: medium;
+        }
+
+        h2 {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            display:table-cell;
+            vertical-align:middle;
+        }
+        form {
+            display:table;/* shrinks to fit conntent */
+            margin:auto;
+        }
+
+        #content {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+        }
+
+        #content td, #content th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 4px;
+            width: 150px;
+        }
+
+        #content tr:nth-child(even){background-color: #f2f2f2;}
+
+        #content tr:hover {background-color: #ddd;}
+
+        #content th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: rgb(25, 101, 253);
+            color: white;
+        }
+    </style>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var loading = false;
+        var currentPage = 1;
+        var tableStart = true;
+
+        function loadMoreData() {
+            if (loading) return;
+            loading = true;
+
+            $.ajax({
+                url: "{% url 'streamresp' name %}",
+                method: 'GET',
+                data: { page: currentPage },
+                success: function(data) {
+                    var lines = data.split('\n');
+                    var tableSize = '<colgroup> <col width="max-content">  <col width="max-content"> <col width="max-content"> <col class="col4"> <col class="col5"> <col class="col6"> <col class="col7"> </colgroup>';
+                    var tableHead = '<tr><th> IP </th><th> Date </th><th> Request method </th><th> Status code </th><th> Request size </th><th> Referer </th><th> Agent </th></tr>'
+                    var tableRows = '';
+
+                    lines.forEach(function(line){
+                        var parts = line.split('|');
+                        if (parts.length === 8) {
+                            tableRows += '<tr><td>' + parts[0] + '</td><td>' + parts[1] + '</td><td>' + parts[2] + '</td><td>' + parts[3] + '</td><td>' + parts[4] + '</td><td>' + parts[5] + '</td><td>' + parts[6] + '</td></tr>';
+                        }
+                    })
+                    if (tableStart === true) {
+                        $('#content').append('<table>' + tableHead + tableRows + '</table>');
+                        tableStart = false;
+                    }
+                    else {
+                        $('#content').append('<table>' + tableRows + '</table>');
+                    }
+                    currentPage++;
+                    loading = false;
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            loadMoreData();
+
+            $(window).scroll(function() {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 500) {
+                    loadMoreData();
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        <div>
+            <a href="{% url 'print' name %}"><button class="back-button">Back</button></a>
+            <a href="{% url 'list' %}"><button class="uploaded-button">Uploaded Logs</button></a>
+        </div>
+        
+        <br>
+        <br>
+        <h2> {{ name }} </h2>
+        <br>
+        <br>
+    </div>
+
+    <div id="content">
+        <!-- logi -->
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Logs</title>
+</head>
+
+<style>
+    h1 {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center;
+    }
+
+    .log-button {
+        background-color: aqua;
+        border: 2px solid gray;
+        border-radius: 6px;
+        font-size: medium;
+    }
+
+    .delete-button {
+        background-color: hsla(0, 100%, 50%, 0.761);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: medium;
+    }
+
+    .home-button {
+        background-color: white;
+        border: 2px solid gray;
+        border-radius: 6px;
+        font-size: medium;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+
+</style>
+
+<body>
+
+    <a href="http://127.0.0.1:8000">
+        <button class="home-button">Home</button>
+    </a>
+
+    <h1>Uploaded Logs</h1>
+    <div class="list">
+        <table>
+            {% for log in filelist %}
+            <tr>
+                <div>
+                    <form action="{% url 'print' log %}">
+                        <button class="log-button" type="submit">{{ log }}</button>
+                    </form>
+        
+                    <form action="{% url 'delete' log %}">
+                        <button class="delete-button" type="submit">x</button>
+                    </form>
+                </div>
+                <br>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
