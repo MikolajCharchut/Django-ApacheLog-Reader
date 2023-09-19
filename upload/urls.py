@@ -1,11 +1,11 @@
 from django.urls import path
-from . import views
+from .views import HomeView, ListLogsView, FilterInputView, StreamLogView, LoadingPageView, DeleteLogView
 
 urlpatterns = [
-    path('', views.Home, name='home'),
-    path('list', views.listLogsView, name='list'),
-    path('print/<str:name>', views.filterInputView, name='print'),
-    path('streamresp/<str:name>', views.stream_log_file, name="streamresp"),
-    path('dynamic/<str:name>', views.dynamic_loading_page, name='dynamic'),
-    path('delete/<str:name>', views.deleteLog, name='delete'),
+    path('', HomeView.as_view(), name='home'),
+    path('list', ListLogsView.as_view(), name='list'),
+    path('print/<str:name>', FilterInputView.as_view(), name='print'),
+    path('streamresp/<str:name>', StreamLogView.as_view(), name="streamresp"),
+    path('dynamic/<str:name>', LoadingPageView.as_view(), name='dynamic'),
+    path('delete/<str:name>', DeleteLogView.as_view(), name='delete'),
     ]
